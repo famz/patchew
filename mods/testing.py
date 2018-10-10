@@ -438,6 +438,12 @@ class TestingGetView(APILoginRequiredView):
             # Shouldn't happen, but let's protect against it
             if not t:
                 continue
+            if not t.get("enabled"):
+                if isinstance(r, MessageResult):
+                    _instance.recalc_pending_tests(r.message)
+                else:
+                    _instance.recalc_pending_tests(r.project)
+                continue
             reqs = t.get("requirements", "")
             for req in [x.strip() for x in reqs.split(",") if x]:
                 if req not in capabilities:

@@ -151,6 +151,17 @@ class SetProjectPropertiesView(APILoginRequiredView):
         for k, v in properties.items():
             po.set_property(k, v)
 
+class DeleteProjectPropertiesByPrefixView(APILoginRequiredView):
+    name = "delete-project-properties-by-prefix"
+    allowed_groups = ["maintainers"]
+
+    def handle(self, request, project, prefix):
+        po = Project.objects.get(name=project)
+        if not po.maintained_by(request.user):
+            raise PermissionDenied("Access denied to this project")
+        for k in [x for x in po.get_properties().keys() if x.startswith(prefix)]:
+            po.set_property(k, None)
+
 def prepare_patch(p):
     r = {"subject": p.subject,
          "message-id": p.message_id,

@@ -220,3 +220,9 @@ if not DEBUG:
             },
         },
     }
+
+
+def debug_toolbar_check(request):
+    return request.user.is_superuser:
+
+SHOW_TOOLBAR_CALLBACK = debug_toolbar_check
